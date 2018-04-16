@@ -8,6 +8,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -295,9 +296,6 @@ public class LinkController extends BaseController{
 						@RequestParam("businessLicenceCopyFile") MultipartFile businessLicenceCopyFile,
 						@RequestParam("certificateAuthorizationFile") MultipartFile certificateAuthorizationFile
 							) {
-		supplier.setStatus(0);
-		supplier.setLastModifyTime(new Date());
-		//supplierService.addSupplier(supplier);
 		//先保存附件到Tomcat目录下
 		
 		ModelAndView modelAndView = new ModelAndView("/pub/index.jsp");
@@ -312,13 +310,29 @@ public class LinkController extends BaseController{
 			SimpleDateFormat sFormat = new SimpleDateFormat("yyyyMMdd");
 			String tempPath = sFormat.format(new Date());
 			String str1 = saveFile(idCardObverseFile, home, "idCardObverseFile"+File.separator+tempPath);
+			if(StringUtils.isNotBlank(str1)){
+				supplier.setIdCardObverse(str1);
+			}
 			String str2 = saveFile(idCardReverseFile,  home, "idCardReverseFile"+File.separator+tempPath);
+			if(StringUtils.isNotBlank(str2)){
+				supplier.setIdCardReverse(str2);
+			}
 			String str3 = saveFile(businessLicenceCopyFile,  home,"businessLicenceCopyFile"+File.separator+tempPath);
+			if(StringUtils.isNotBlank(str3)){
+				supplier.setBusinessLicenceCopy(str3);
+			}
 			String str4 = saveFile(certificateAuthorizationFile,  home, "certificateAuthorizationFile"+File.separator+tempPath);
+			if(StringUtils.isNotBlank(str4)){
+				supplier.setCertificateAuthorization(str4);
+			}
 			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		supplier.setStatus(0);
+		supplier.setLastModifyTime(new Date());
+		supplierService.addSupplier(supplier);
+
 		return new ModelAndView("redirect:/security/login/");
 	}
 	
@@ -327,15 +341,17 @@ public class LinkController extends BaseController{
 		if(file!=null){
 			try {
 				String fileName = file.getOriginalFilename();
-				String fileExt = FilePathUtil.getSuffix(fileName);
-				filePath = Constant.FILE_SAVE_PATH + File.separator + savePath;
-				File saveFolder = new File(homePath + File.separator + filePath);
-				if(!saveFolder.exists()){
-					saveFolder.mkdirs();
+				if(StringUtils.isNotBlank(fileName)){
+					String fileExt = FilePathUtil.getSuffix(fileName);
+					filePath = Constant.FILE_SAVE_PATH + File.separator + savePath;
+					File saveFolder = new File(homePath + File.separator + filePath);
+					if(!saveFolder.exists()){
+						saveFolder.mkdirs();
+					}
+					filePath = filePath +  File.separator + System.currentTimeMillis() + "." + fileExt;
+					File newFile = new File(homePath + filePath);
+					file.transferTo(newFile);
 				}
-				filePath = filePath +  File.separator + System.currentTimeMillis() + "." + fileExt;
-				File newFile = new File(homePath + filePath);
-				file.transferTo(newFile);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

@@ -96,7 +96,7 @@ public class Supplier extends BaseId {
 		this.businessContactsEmail = businessContactsEmail;
 	}
 	
-	@Column(name = "industry_classification", length=8)
+	@Column(name = "industry_classification", length=16)
 	public String getIndustryClassification() {
 		return industryClassification;
 	}

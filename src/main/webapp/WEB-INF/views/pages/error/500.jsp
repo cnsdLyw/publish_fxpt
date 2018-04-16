@@ -1,7 +1,7 @@
 <%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
 <%@ page import="java.io.PrintWriter"%>
 <%@ page import="java.io.StringWriter"%>
-<%@ include file="../../common/taglibs.jsp"%>
+<%@ include file="/common/taglibs.jsp"%>
 <%
 	Exception ex = (Exception)request.getAttribute("ex");
 %>

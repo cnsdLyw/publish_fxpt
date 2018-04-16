@@ -17,42 +17,40 @@
 <style type="text/css">
 </style>
 <script type="text/javascript">
-    function getUser(id) {
+    function getSupplier(id) {
 	    $.ajax( {  
 	        type : "get",  
-	        url : "${ctx}/user/getJsonUser/?id="+id,  
+	        url : "${ctx}/supplier/getJsonSupplier/?id="+id,  
 	        dataType:"json",  
-	        success : function(user) {
-	       		var content = '';
-   				for(var i =0;i<user.roleList.length;i++){
-   					content+=user.roleList[i].roleName+"&nbsp;&nbsp;&nbsp;&nbsp;";
-   					if((i+1)%3==0&&(i+1)<user.roleList.length){
-   						content+="<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
-   					}
-   				}
-   				
-   				var orgName='';
-   				if(user.organization){  
-   					orgName=user.organization.orgName;
-   				}
-	           	var contentInner="<p>登录名："+user.loginName+" </p>"+
-	           				/* "<p>所属机构："+orgName+" </p>"+ */
-	           				"<p>角色："+content+" </p>"+
-	           				"<p>姓名："+user.name+" </p>"+
-	           				"<p>性别："+(user.sex!=null?user.sex:"")+" </p>"+
-	           				"<p>邮箱："+user.email+" </p>"+
-	           				"<p>联系电话："+(user.phone!=null?user.phone:"")+" </p>"+
-	           				"<p>地址："+(user.address!=null?user.address:"")+" </p>";
-				    $("#detailContent").html(contentInner);
+	        success : function(supplier) {
+	           	var content="<p><strong class='pTitle'>公司名称</strong>："+supplier.companyName+" </p>"+
+	           				"<p><strong class='pTitle'>行业分类</strong>："+(supplier.industryClassification!=null?supplier.industryClassification:"")+" </p>"+
+	           				"<p><strong class='pTitle'>主管人</strong>："+(supplier.supervisor!=null?supplier.supervisor:"")+" </p>"+
+	           				"<p><strong class='pTitle'>主管人电话</strong>："+(supplier.supervisorPhone!=null?supplier.supervisorPhone:"")+" </p>"+
+	           				"<p><strong class='pTitle'>业务联系人</strong>："+(supplier.businessContacts!=null?supplier.businessContacts:"")+" </p>"+
+	           				"<p><strong class='pTitle'>业务联系人电话</strong>："+(supplier.businessContactsPhone!=null?supplier.businessContactsPhone:"")+" </p>"+
+	           				"<p><strong class='pTitle'>业务联系人邮箱</strong>："+(supplier.businessContactsEmail!=null?supplier.businessContactsEmail:"")+" </p>"+
+	           				"<p><strong class='pTitle'>地区</strong>："+(supplier.province!=null?supplier.province:"")+"&nbsp;&nbsp;"+(supplier.city!=null?supplier.city:"")+"&nbsp;&nbsp;"+(supplier.county!=null?supplier.county:"")+" </p>"+
+	           				"<p><strong class='pTitle'>供应商地址</strong>："+(supplier.address!=null?supplier.address:"")+" </p>"+
+	           				"<p><strong class='pTitle'>公司电话</strong>："+(supplier.telephone!=null?supplier.telephone:"")+" </p>"+
+	           				"<p><strong class='pTitle'>公司传真</strong>："+(supplier.fax!=null?supplier.fax:"")+" </p>"+
+	           				"<p><strong class='pTitle'>邮编</strong>："+(supplier.postalCode!=null?supplier.postalCode:"")+" </p>"+
+	           				"<p><strong class='pTitle'>主管人身份证正面</strong>："+(supplier.idCardObverse!=null?"<a target='_blank' href='${ctx}"+supplier.idCardObverse+"/'>预览</a>":"")+" </p>"+
+	           				"<p><strong class='pTitle'>主管人身份证反面</strong>："+(supplier.idCardReverse!=null?"<a target='_blank' href='${ctx}"+supplier.idCardReverse+"/'>预览</a>":"")+" </p>"+
+	           				"<p><strong class='pTitle'>企业营业执照副本</strong>："+(supplier.businessLicenceCopy!=null?"<a target='_blank' href='${ctx}"+supplier.businessLicenceCopy+"/'>预览</a>":"")+" </p>"+
+	           				"<p><strong class='pTitle'>授权书</strong>："+(supplier.certificateAuthorization!=null?"<a target='_blank' href='${ctx}"+supplier.certificateAuthorization+"/'>预览</a>":"")+" </p>"+
+	           				"<p><strong class='pTitle'>最后修改时间</strong>："+(supplier.lastModifyTime!=null?FormatDate(supplier.lastModifyTime):"")+" </p>"
+	           				;
+				$("#detailContent").html(content);
 	        }  
 	    });  
 	} 
         
-	function deleteUser(id){
+	function deleteSupplier(id){
 		bootbox.setDefaults("locale","zh_CN"); 
 		bootbox.confirm("确认删除，删除后不可恢复!", function (result) {  
                if(result) {//确认删除  
-                  	document.location.href="${ctx}/user/deleteUser/"+id+".html";
+                  	document.location.href="${ctx}/supplier/deleteSupplier/"+id+".html";
                } 
         });  
 	}
@@ -70,12 +68,21 @@
 		    bootbox.confirm("确认删除，删除后不可恢复!", function (result) {  
                 if(result) {//确认删除  
                 	ids = ids.substring(0,ids.lastIndexOf(","));
-                	document.location.href="${ctx}/user/deleteUsers/"+ids+".html";
+                	document.location.href="${ctx}/supplier/deleteSuppliers/"+ids+".html";
                 } 
          });  
 		}else{
 			bootbox.alert("您还没有选择要删除的用户!", function() {});
 		}
+	}
+	
+	function FormatDate (strTime) {
+		if(strTime){
+			var date = new Date(strTime);
+			return date.getFullYear()+"-"+(date.getMonth()+1)+"-"+date.getDate();
+		    //return date.getFullYear()+"-"+(date.getMonth()+1)+"-"+date.getDate()+" "+date.getHours()+":"+date.getMinutes()+":"+date.getSeconds();
+		}
+	    return '';
 	}
 	
 	function hideBlock(){
@@ -85,6 +92,13 @@
 		setTimeout("javascript:hideBlock();", 3500)
 	</c:if>
 </script>
+    <style type="text/css">
+		.pTitle{
+			font-size: 16px;
+			color: #269abc;//rgb(74, 164, 180);
+			font-family:microsoft yahei;
+		}
+	</style>
 </head>
 <body class="no-skin">
 	<%@include file="../common/top.jsp"%>
@@ -115,12 +129,12 @@
 					</div>
 				</c:if>
 				<!-- Modal -->
-				<div class="modal fade" id="templatemo_modal" tabindex="-1" user="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+				<div class="modal fade" id="templatemo_modal" tabindex="-1" supplier="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 				  <div class="modal-dialog">
 				    <div class="modal-content">
 				      <div class="modal-header">
 				        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-				        <h4 class="modal-title" id="myModalLabel">查看产品详细信息</h4>
+				        <h4 class="modal-title" id="myModalLabel">查看供应商详细信息</h4>
 				      </div>
 				      <div class="modal-body" id="detailContent">
 				      	
@@ -133,7 +147,7 @@
 				</div>
 				
 					<div class="col-md-12">
-					<form action="${ctx }/user/list" method="post" id="queryForm">
+					<form action="${ctx }/supplier/list" method="post" id="queryForm">
 						<input type="hidden" id="orderType" name="orderType" value="${orderType }" />
 						<input type="hidden" id="sortType" name="sortType" value="${sortType }" />
 					    <input type="hidden" id="pageNo" name="pageNo" />
@@ -151,7 +165,7 @@
 									<button class="btn btn-sm btn-primary  pull-right" style="margin-bottom: 7px;" type="submit">
 										<i class="ace-icon glyphicon glyphicon-search"></i> 搜 索
 									</button>
-									<input type="text" class="col-md-5 col-sm-2 pull-right" id="keyWord" name="keyWord"  value="${keyWord }" placeholder="产品名称|代码" data-rel="tooltip" title="登录名|姓名">
+									<input type="text" class="col-md-5 col-sm-2 pull-right" id="keyWord" name="keyWord"  value="${keyWord }" placeholder="公司名称|联系人" data-rel="tooltip" title="登录名|姓名">
 								</div><!-- 表单检索row  end-->
 							</div>
 						</div><!-- 操作按钮end -->
@@ -164,45 +178,46 @@
 									<input type="hidden" id="pageNo" name="pageNo" />
 										<table id="dynamic-table"
 											class="table table-striped table-bordered table-hover dataTable no-footer DTTT_selectable"
-											user="grid" aria-describedby="dynamic-table_info">
+											supplier="grid" aria-describedby="dynamic-table_info">
 											<thead>
-												<tr user="row">
+												<tr supplier="row">
 													<th class="center sorting_disabled" rowspan="1" colspan="1"
 														aria-label=""><label class="pos-rel"> <input
 															type="checkbox" class="ace"> <span class="lbl"></span>
 													</label></th>
-													<th class="sorting" id="loginName" tabindex="0" onclick="javascript:sort(this,'queryForm','loginName','asc');">公司名称</th>
-													<th class="sorting" id="name" tabindex="0" onclick="javascript:sort(this,'queryForm','name','asc');">网址</th>
-													<th class="sorting" id="name" tabindex="0" onclick="javascript:sort(this,'queryForm','name','asc');">电子邮箱</th>
-													<th class="sorting" id="name" tabindex="0" onclick="javascript:sort(this,'queryForm','name','asc');">电话</th>
-													<th class="sorting" id="name" tabindex="0" onclick="javascript:sort(this,'queryForm','name','asc');">传真</th>
-													<th class="sorting" id="name" tabindex="0" onclick="javascript:sort(this,'queryForm','name','asc');">所属行业</th>
+													<th class="sorting" id="companyName" tabindex="0" onclick="javascript:sort(this,'queryForm','companyName','asc');">公司名称</th>
+													<th class="sorting" id="industryClassification" tabindex="0" onclick="javascript:sort(this,'queryForm','industryClassification','asc');">行业分类</th>
+													<th class="sorting" id="supervisor" tabindex="0" onclick="javascript:sort(this,'queryForm','supervisor','asc');">主管人</th>
+													<th class="sorting hidden-1024" id="supervisorPhone" tabindex="0" onclick="javascript:sort(this,'queryForm','supervisorPhone','asc');">主管人电话</th>
+													<th class="sorting" id="businessContacts" tabindex="0" onclick="javascript:sort(this,'queryForm','businessContacts','asc');">业务联系人</th>
+													<th class="sorting hidden-1024" id="businessContactsPhone" tabindex="0" onclick="javascript:sort(this,'queryForm','businessContactsPhone','asc');">业务联系人电话</th>
+													<th class="sorting" id="businessContactsEmail" tabindex="0" onclick="javascript:sort(this,'queryForm','businessContactsEmail','asc');">业务联系人邮箱</th>
 													<th>操作</th>
 												</tr>
 											</thead>
 											<tbody>
+												<c:forEach  items="${pageContent.content}" var="supplier">
 													<tr user="row">
 														<td class="center"><label class="pos-rel"> 
-															<input name="ids" type="checkbox" class="ace" value="1}"> <span class="lbl"></span>
+															<input name="ids" type="checkbox" class="ace" value="${supplier.id }"> <span class="lbl"></span>
 														</label>
 														</td>
-														<td>XXXX公司</td>
-														<td>www.baidu.com</td>
-														<td>wwwsdds@163.com</td>
-														<td>010-88888888</td>
-														<td>010-88888888</td>
-														<td>能源</td>
+														<td>${supplier.companyName }</td>
+														<td>${supplier.industryClassification }</td>
+														<td>${supplier.supervisor }</td>
+														<td class="hidden-1024">${supplier.supervisorPhone }</td>
+														<td>${supplier.businessContacts }</td>
+														<td class="hidden-1024">${supplier.businessContactsPhone }</td>
+														<td>${supplier.businessContactsEmail }</td>
 														<td>
-															<a class="green" href="#" class="test" onclick="getUser(${user.id})" data-toggle="modal" data-target="#templatemo_modal" title="查看详情">  <i
+															<a class="green" href="#" class="test" onclick="getSupplier(${supplier.id})" data-toggle="modal" data-target="#templatemo_modal" title="查看详情">  <i
 																	class="ace-icon fa fa-book bigger-130"></i>
 															</a> &nbsp;&nbsp;&nbsp; 
-															<security:authorize ifAnyGranted="ROLER_SYS_USER_EDIT">	
-																<a class="green" href="void(0)" title="点击修改"> <i
-																		class="ace-icon fa fa-pencil bigger-130"></i>
-																</a> &nbsp;&nbsp;&nbsp;
-															</security:authorize>
+															<a class="green" href="void(0)" title="点击修改"> <i class="ace-icon fa fa-pencil bigger-130"></i>
+															</a> &nbsp;&nbsp;&nbsp;
 														</td>
 													</tr>
+												</c:forEach>
 											</tbody>
 										</table>
 										<!-- 分页 begin -->

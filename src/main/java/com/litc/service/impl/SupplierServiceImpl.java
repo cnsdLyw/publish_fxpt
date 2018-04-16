@@ -1,15 +1,25 @@
 package com.litc.service.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.litc.repository.SupplierRepository;
+import com.litc.security.model.Supplier;
 import com.litc.security.model.Supplier;
 import com.litc.service.SupplierService;
 
@@ -58,10 +68,23 @@ public class SupplierServiceImpl implements SupplierService {
 
 	@Override
 	public Page<Supplier> getSuppliersByPages(int pageNo, int pageSize,
-			Direction driection, String orderType, String orgCode,
-			String keyWord) {
-		// TODO Auto-generated method stub
-		return null;
+			Direction driection, String orderType, final String keyWord) {
+		Page<Supplier> userPage = supplierRepository.findAll(new Specification<Supplier>() {
+			@Override
+			public Predicate toPredicate(Root<Supplier> root, CriteriaQuery<?> query,
+					CriteriaBuilder cb) {
+				List<Predicate> predList = new ArrayList<Predicate>();
+				
+				if(StringUtils.isNotBlank(keyWord)){
+					Predicate p = cb.or(cb.like(root.get("companyName").as(String.class), "%"+keyWord+"%"), cb.like(root.get("businessContacts").as(String.class),  "%"+keyWord+"%"));
+					predList.add(p);
+				}
+				Predicate[] sCondition=(Predicate[])predList.toArray(new Predicate[predList.size()]);
+				query.where(sCondition);
+				return null;
+			}
+		},new PageRequest(pageNo, pageSize,driection, orderType));
+		return userPage;
 	}
 
 	@Override

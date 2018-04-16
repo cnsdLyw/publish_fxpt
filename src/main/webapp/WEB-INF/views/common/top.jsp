@@ -1,5 +1,5 @@
 <%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
-<%@ include file="./taglibs.jsp"%>
+<%@ include file="/common/taglibs.jsp"%>
 <%@page import="com.litc.common.util.Constant"%>
 <c:set var="login_role" value="${sessionScope.loginRole }" />
 <%

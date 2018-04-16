@@ -131,7 +131,6 @@
                         <div class='col-md-3'></div>
                         <div class='col-md-4 ccontrols'></div>
                      </div>
-                   <!--	   
                      <div class='form-group controls'>
                         <label class='control-label col-md-3 no-padding-right formTitle'><strong><font color="red">*</font>&nbsp;&nbsp;主管人</strong></label>
                         <div class='col-md-8' style="height:50px;">
@@ -194,7 +193,7 @@
 						</div>
                         <div class='col-md-4 ccontrols'>
                         </div>
-					</div>-->
+					</div>
 					<div class="form-group">
 						<label class='control-label col-md-3 no-padding-right formTitle'><strong>地区</strong></label> 
 						<div class="col-md-3" style="height:50px;">		          	
@@ -210,7 +209,6 @@
 				    		</select>
 				        </div>
 					</div>
-					 <!--				
 					 <div class='form-group controls'>
                         <label class='control-label col-md-3 no-padding-right formTitle'><strong><font color="red">*</font>&nbsp;&nbsp;供应商地址</strong></label>
                         <div class='col-md-8' style="height:50px;">
@@ -260,7 +258,6 @@
                         <div class='col-md-3'></div>
                         <div class='col-md-4 ccontrols'></div>
                      </div>
-                     -->
                      <!-- 相关附件上传 -->
                      <div class="form-group">
                      	<div class="control-label col-md-3 no-padding-right formTitle"><strong>主管人身份证正面</strong></div>

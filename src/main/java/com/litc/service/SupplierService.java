@@ -59,7 +59,7 @@ public interface SupplierService {
 	 * @param args
 	 * @return
 	 */
-	public Page<Supplier> getSuppliersByPages(int pageNo,int pageSize,Direction driection,String orderType,String orgCode,String keyWord);
+	public Page<Supplier> getSuppliersByPages(int pageNo,int pageSize,Direction driection,String orderType,String keyWord);
 	
 	
 	/**
