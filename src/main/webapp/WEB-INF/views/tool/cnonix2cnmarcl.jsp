@@ -6,7 +6,7 @@
 			+ request.getServerName() + ":" + request.getServerPort()
 			+ path + "/";
 %>
-<%@ include file="../common/taglibs.jsp"%>
+<%@ include file="/common/taglibs.jsp"%>
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
