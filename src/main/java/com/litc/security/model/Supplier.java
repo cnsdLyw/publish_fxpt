@@ -33,13 +33,19 @@ public class Supplier extends BaseId {
 	private String county;// 县
 	private String address;// //供应商地址
 	private String postalCode;// //邮编
+	private String website;// //网址
 	private String telephone;// //公司电话
 	private String fax;// //公司传真
-	private String idCardObverse;// 主管人身份证正面
-	private String idCardReverse;// 主管人身份证反面
-	private String businessLicenceCopy;// 企业营业执照副本
-	private String certificateAuthorization;// 授权书
+	private String idCardObverse;// 主管人身份证正面附件路径
+	private String idCardObverseName;// 主管人身份证正面附件名称
+	private String idCardReverse;// 主管人身份证反面附件路径
+	private String idCardReverseName;// 主管人身份证反面附件名称
+	private String businessLicenceCopy;// 企业营业执照副本附件路径
+	private String businessLicenceCopyName;// 企业营业执照副本附件名称
+	private String certificateAuthorization;// 授权书附件路径
+	private String certificateAuthorizationName;// 授权书附件名称
 	private Integer status;//状态
+	private String remark;//备注简介
 	private Date lastModifyTime;//修改时间
 
 	@Column(name = "company_name", length=100)
@@ -96,7 +102,7 @@ public class Supplier extends BaseId {
 		this.businessContactsEmail = businessContactsEmail;
 	}
 	
-	@Column(name = "industry_classification", length=16)
+	@Column(name = "industry_classification", length=60)
 	public String getIndustryClassification() {
 		return industryClassification;
 	}
@@ -149,6 +155,15 @@ public class Supplier extends BaseId {
 	public void setPostalCode(String postalCode) {
 		this.postalCode = postalCode;
 	}
+	
+	@Column(name = "website", length=100)
+	public String getWebsite() {
+		return website;
+	}
+
+	public void setWebsite(String website) {
+		this.website = website;
+	}
 
 	@Column(name = "telephone", length=16)
 	public String getTelephone() {
@@ -177,6 +192,15 @@ public class Supplier extends BaseId {
 		this.idCardObverse = idCardObverse;
 	}
 
+	@Column(name = "id_card_obverse_name", length=255)	
+	public String getIdCardObverseName() {
+		return idCardObverseName;
+	}
+
+	public void setIdCardObverseName(String idCardObverseName) {
+		this.idCardObverseName = idCardObverseName;
+	}
+
 	@Column(name = "id_card_reverse", length=255)
 	public String getIdCardReverse() {
 		return idCardReverse;
@@ -184,6 +208,15 @@ public class Supplier extends BaseId {
 
 	public void setIdCardReverse(String idCardReverse) {
 		this.idCardReverse = idCardReverse;
+	}
+
+	@Column(name = "id_card_reverse_name", length=255)
+	public String getIdCardReverseName() {
+		return idCardReverseName;
+	}
+
+	public void setIdCardReverseName(String idCardReverseName) {
+		this.idCardReverseName = idCardReverseName;
 	}
 
 	@Column(name = "business_licence_copy", length=255)
@@ -194,6 +227,15 @@ public class Supplier extends BaseId {
 	public void setBusinessLicenceCopy(String businessLicenceCopy) {
 		this.businessLicenceCopy = businessLicenceCopy;
 	}
+	
+	@Column(name = "business_licence_copy_name", length=255)
+	public String getBusinessLicenceCopyName() {
+		return businessLicenceCopyName;
+	}
+
+	public void setBusinessLicenceCopyName(String businessLicenceCopyName) {
+		this.businessLicenceCopyName = businessLicenceCopyName;
+	}
 
 	@Column(name = "certificate_authorization", length=255)
 	public String getCertificateAuthorization() {
@@ -203,6 +245,15 @@ public class Supplier extends BaseId {
 	public void setCertificateAuthorization(String certificateAuthorization) {
 		this.certificateAuthorization = certificateAuthorization;
 	}
+	
+	@Column(name = "certificate_authorization_name", length=255)
+	public String getCertificateAuthorizationName() {
+		return certificateAuthorizationName;
+	}
+
+	public void setCertificateAuthorizationName(String certificateAuthorizationName) {
+		this.certificateAuthorizationName = certificateAuthorizationName;
+	}
 
 	@Column(name = "status", length=2)
 	public Integer getStatus() {
@@ -211,6 +262,15 @@ public class Supplier extends BaseId {
 
 	public void setStatus(Integer status) {
 		this.status = status;
+	}
+
+	@Column(name = "remark", length=500)
+	public String getRemark() {
+		return remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
 	}
 
 	@Column(name = "last_modify_time")

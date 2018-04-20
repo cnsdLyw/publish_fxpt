@@ -47,34 +47,20 @@
 						return e.closest(".form-group").removeClass("has-error");
 					},
 					submitHandler : function(form) {
-
-           				//验证登录名和联系邮箱
-						//-----------------------
-						$.ajax({//验证登录名
-							      type : "get", 
-							       url : "${ctx}/user/isLoginNameExist/?loginName="+$("#loginName").val(),
-							      dataType:"json",  
-							      success : function(isExist) {
-							      	if(!isExist){
-							      		$.ajax({//验证邮箱
-										      type : "get",  
-										   	  url : "${ctx}/user/isEmailExist/?email="+$("#businessContactsEmail").val(),  
-										      dataType:"json",  
-										      success : function(isExist) {
-										      	if(!isExist){
-										      		form.submit();
-										      	}else{
-										      		bootbox.alert("邮箱已存在，请重新输入!", function() {});
-										      		return false;
-										      	}
-										      }  
-										  });
-							      	}else{
-							      		bootbox.alert("用户名已存在，请重新输入!", function() {});
-							      		return false;
-							      	}
-							      }  
-						});
+			      		$.ajax({//验证邮箱
+						      type : "get",  
+						   	  url : "${ctx}/supplier/isEmailExist/?email="+$("#businessContactsEmail").val(),  
+						      dataType:"json",  
+						      success : function(isExist) {
+						      	if(!isExist){
+						      		form.submit();
+						      	}else{
+						      		bootbox.alert("邮箱已存在，请重新输入!", function() {});
+						      		return false;
+						      	}
+						      }  
+						  });
+		
 						//--------------------------------										
 										
              				//先验证机构代码，在验证是否同意服务条款
@@ -131,6 +117,7 @@
                         <div class='col-md-3'></div>
                         <div class='col-md-4 ccontrols'></div>
                      </div>
+                     <!-- 
                      <div class='form-group controls'>
                         <label class='control-label col-md-3 no-padding-right formTitle'><strong><font color="red">*</font>&nbsp;&nbsp;主管人</strong></label>
                         <div class='col-md-8' style="height:50px;">
@@ -180,16 +167,20 @@
                         <div class='col-md-3'></div>
                         <div class='col-md-4 ccontrols'></div>
                      </div>
-                     
+                      -->
 					<div class="form-group">
 						<label class='control-label col-md-3 no-padding-right formTitle'><strong>行业分类</strong></label>
 						<div class='col-md-8' style="height:50px;">
-			            		<select class=" form-control col-xs-5 col-md-5" id="industryClassification" name="industryClassification">
+			            		<select class="form-control col-xs-5 col-md-5" id="industryClassification" name="industryClassification" onchange="checkClass(this)">
 			            			<option value="">-选择行业分类-</option>
 				            		<c:forEach var="clzss" items="${classList}">
 				            			<option value="${clzss.classCode}">${clzss.className }</option>
 						        	</c:forEach>
+						        	<option value="-1">其他分类</option>
 					        	</select>
+					        	<div id="otherClassDiv" style="display: none;">
+					        		<input id="otherClass" name="otherClass" class='form-control' placeholder='添加其他分类，不超过16个字' type='text' data-rule-maxlength='16'>
+								</div>
 						</div>
                         <div class='col-md-4 ccontrols'>
                         </div>
@@ -229,6 +220,16 @@
                         <div class='col-md-4 ccontrols'></div>
                      </div>
                      
+                     <div class='form-group controls'>
+                        <label class='control-label col-md-3 no-padding-right formTitle'><strong>公司网址</strong></label>
+                        <div class='col-md-8' style="height:50px;">
+                          <input class='form-control' id="website" name="website" isWebsit="true"
+                          	data-rule-minlength='6'  data-rule-maxlength='30' placeholder='例：www.xxx.com' type='text'>
+                        </div>
+                        <div class='col-md-3'></div>
+                        <div class='col-md-4 ccontrols'></div>
+                     </div>
+                     
                       <div class='form-group controls'>
                         <label class='control-label col-md-3 no-padding-right formTitle'><strong>公司电话</strong></label>
                         <div class='col-md-8' style="height:50px;">
@@ -248,7 +249,7 @@
                         <div class='col-md-3'></div>
                         <div class='col-md-4 ccontrols'></div>
                      </div>
-                     
+                     <!-- 
                      <div class='form-group controls'>
                         <label class='control-label col-md-3 no-padding-right formTitle'><strong>登录帐号</strong></label>
                         <div class='col-md-8' style="height:50px;">
@@ -258,6 +259,7 @@
                         <div class='col-md-3'></div>
                         <div class='col-md-4 ccontrols'></div>
                      </div>
+                      -->
                      <!-- 相关附件上传 -->
                      <div class="form-group">
                      	<div class="control-label col-md-3 no-padding-right formTitle"><strong>主管人身份证正面</strong></div>
@@ -287,6 +289,16 @@
 							<input type="file" id="certificateAuthorizationFile" name="certificateAuthorizationFile"/>
 						</div>
 					 </div>
+					 
+					 <div class='form-group controls'>
+                        <label class='control-label col-md-3 no-padding-right formTitle'><strong><font color="red">*</font>&nbsp;&nbsp;供应商简介</strong></label>
+                        <div class='col-md-8' style="height:200px;">
+                           <textarea style="width:100%;" rows="8"  placeholder="请输入1-200个字符的内容" data-rule-minlength='1' data-rule-maxlength='600' id="remark" name="remark">${supplier.remark}</textarea>
+				        	<h6 class="col-md-12" style="text-align: left;">您还可以输入<span id="word">200</span>个字符。</h6>
+                        </div>
+                        <div class='col-md-3'></div>
+                        <div class='col-md-4 ccontrols'></div>
+                     </div>
             
 			        <div class="form-group">
 		        	   <div class="col-md-2">
@@ -374,7 +386,27 @@
 			//onchange:''
 			//
 		});
+		
+		var textLength = 200;
+	  	$("#remark").keyup(function(){
+	   		var len = $(this).val().length;
+	   		if(len > (textLength-1)){
+	    		$(this).val($(this).val().substring(0,textLength));
+	   		}
+	   		var num = textLength - len;
+	   		if(num>=0)
+	   		$("#word").text(num);
+	  	});
 	});
+	
+	function checkClass(obj){
+		if('-1'==obj.value){
+			$("#otherClassDiv").css("display","block");
+		}else{
+			$("#otherClassDiv").css("display","none");
+			$("#otherClass").val("");
+		}
+	}
 	
 </script>	
 </html>

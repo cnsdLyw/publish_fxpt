@@ -126,13 +126,13 @@
 								name: '添加分类',
 								iconClass: "fa-plus green",
 								onClick: function() {
-									window.open("../jcClassification/addClass?classKey="+classKey+"&parentCode="+value.code, "main_content_configure");
+									window.open("../classification/addClass?classKey="+classKey+"&parentCode="+value.code, "main_content_configure");
 								}
 							  }, {
 								name: '修改分类',
 								iconClass: 'fa-edit blue',
 								onClick: function() {
-									window.open("../jcClassification/updateClass?classCode="+value.code, "main_content_configure");
+									window.open("../classification/updateClass?classCode="+value.code, "main_content_configure");
 								}
 							  }, {
 								name: '删除分类',

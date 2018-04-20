@@ -4,6 +4,8 @@ import java.io.File;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.litc.common.util.UUID;
+
 
 public class TestString {
 	public static void main(String[] args) {
@@ -56,8 +58,10 @@ public class TestString {
 		Integer i = (int) a;*/
 		//System.out.println(String.valueOf(null));
 		
-		String str = "0cd29996-1e61-484b-a4e6-39da85c63ea3";
-		System.out.println(str.length());
+		/*String str = "0cd29996-1e61-484b-a4e6-39da85c63ea3";
+		System.out.println(str.length());*/
+		
+		System.out.println(java.util.UUID.randomUUID().toString());
 	}
 	
 	

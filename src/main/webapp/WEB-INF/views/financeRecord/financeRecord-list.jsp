@@ -17,42 +17,56 @@
 <style type="text/css">
 </style>
 <script type="text/javascript">
-    function getUser(id) {
+    function getFinanceRecord(id) {
 	    $.ajax( {  
 	        type : "get",  
-	        url : "${ctx}/user/getJsonUser/?id="+id,  
+	        url : "${ctx}/financeRecord/getJsonFinanceRecord/?id="+id,  
 	        dataType:"json",  
-	        success : function(user) {
-	       		var content = '';
-   				for(var i =0;i<user.roleList.length;i++){
-   					content+=user.roleList[i].roleName+"&nbsp;&nbsp;&nbsp;&nbsp;";
-   					if((i+1)%3==0&&(i+1)<user.roleList.length){
-   						content+="<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
-   					}
-   				}
-   				
-   				var orgName='';
-   				if(user.organization){  
-   					orgName=user.organization.orgName;
-   				}
-	           	var contentInner="<p>登录名："+user.loginName+" </p>"+
-	           				/* "<p>所属机构："+orgName+" </p>"+ */
-	           				"<p>角色："+content+" </p>"+
-	           				"<p>姓名："+user.name+" </p>"+
-	           				"<p>性别："+(user.sex!=null?user.sex:"")+" </p>"+
-	           				"<p>邮箱："+user.email+" </p>"+
-	           				"<p>联系电话："+(user.phone!=null?user.phone:"")+" </p>"+
-	           				"<p>地址："+(user.address!=null?user.address:"")+" </p>";
-				    $("#detailContent").html(contentInner);
+	        success : function(financeRecord) {
+	           	var content="<p><strong class='pTitle'>金额</strong>："+financeRecord.amount+" </p>"+
+	           				"<p><strong class='pTitle'>类别</strong>：";
+	           				if(financeRecord.amountType!=null){
+	           					if(financeRecord.amountType=="-1"){
+	           						 content+="<span class='label label-sm label-success'>支出</span>";
+	           					}else if(financeRecord.amountType=="+1"){
+			           				 content+="<span class='label label-sm label-danger'>收入</span>";
+	           						
+	           					}
+	           				}
+	           	    content+=" </p>"+
+	           				"<p><strong class='pTitle'>状态</strong>：";
+	           				
+	           				if(financeRecord.status!=null){
+	           					if(financeRecord.status=="0"){
+	           						content+="<span class='label label-sm label-info arrowed-in'>待审核 </span>";
+	           					}else if(financeRecord.status=="1"){
+			           				content+="<span class='label label-sm label-success'>审核通过</span>";
+	           					}else if(financeRecord.status=="2"){
+	           						content+="<span class='label label-sm label-warning arrowed-in arrowed-right'>审核不通过</span>";
+	           					}
+	           				}
+	           	   content+=" </p>"+
+	           	   			"<p><strong class='pTitle'>经手人</strong>："+(financeRecord.amountUser!=null?financeRecord.amountUser:"")+" </p>"+
+	           				"<p><strong class='pTitle'>时间</strong>："+(financeRecord.amountTime!=null?FormatDate(financeRecord.amountTime):"")+" </p>"+
+	           				"<p><strong class='pTitle'>说明</strong>："+(financeRecord.remark!=null?financeRecord.remark:"")+" </p>"+
+	           				"<p><strong class='pTitle'>录入人员</strong>："+(financeRecord.operator!=null?financeRecord.operator:"")+" </p>"+
+	           				"<p><strong class='pTitle'>审核人员</strong>："+(financeRecord.auditor!=null?financeRecord.auditor:"")+" </p>"+
+	           				"<p><strong class='pTitle'>审核意见</strong>："+(financeRecord.auditOpinion!=null?financeRecord.auditOpinion:"")+" </p>"+
+	           				"<p><strong class='pTitle'>审核时间</strong>："+(financeRecord.auditTime!=null?FormatDate(financeRecord.auditTime):"")+" </p>"+
+	           				"<p><strong class='pTitle'>相关附件</strong>："+(financeRecord.attachment!=null?"<a target='_blank' href='${ctx}"+financeRecord.attachment+"/' title='点击预览'>"+financeRecord.attachmentName+"</a>":"")+" </p>"+
+	           				"<p><strong class='pTitle'>供应商简介</strong>："+(financeRecord.remark!=null?financeRecord.remark:"")+" </p>"+
+	           				"<p><strong class='pTitle'>录入时间</strong>："+(financeRecord.lastModifyTime!=null?FormatDate(financeRecord.lastModifyTime):"")+" </p>"
+	           				;
+				$("#detailContent").html(content);
 	        }  
 	    });  
 	} 
         
-	function deleteUser(id){
+	function deleteFinanceRecord(id){
 		bootbox.setDefaults("locale","zh_CN"); 
 		bootbox.confirm("确认删除，删除后不可恢复!", function (result) {  
                if(result) {//确认删除  
-                  	document.location.href="${ctx}/user/deleteUser/"+id+".html";
+                  	document.location.href="${ctx}/financeRecord/deleteFinanceRecord/"+id+".html";
                } 
         });  
 	}
@@ -70,12 +84,21 @@
 		    bootbox.confirm("确认删除，删除后不可恢复!", function (result) {  
                 if(result) {//确认删除  
                 	ids = ids.substring(0,ids.lastIndexOf(","));
-                	document.location.href="${ctx}/user/deleteUsers/"+ids+".html";
+                	document.location.href="${ctx}/financeRecord/deleteFinanceRecords/"+ids+".html";
                 } 
          });  
 		}else{
-			bootbox.alert("您还没有选择要删除的用户!", function() {});
+			bootbox.alert("您还没有选择要删除的财务信息!", function() {});
 		}
+	}
+	
+	function FormatDate (strTime) {
+		if(strTime){
+			var date = new Date(strTime);
+			return date.getFullYear()+"-"+(date.getMonth()+1)+"-"+date.getDate();
+		    //return date.getFullYear()+"-"+(date.getMonth()+1)+"-"+date.getDate()+" "+date.getHours()+":"+date.getMinutes()+":"+date.getSeconds();
+		}
+	    return '';
 	}
 	
 	function hideBlock(){
@@ -85,6 +108,13 @@
 		setTimeout("javascript:hideBlock();", 3500)
 	</c:if>
 </script>
+    <style type="text/css">
+		.pTitle{
+			font-size: 16px;
+			color: #269abc;//rgb(74, 164, 180);
+			font-family:microsoft yahei;
+		}
+	</style>
 </head>
 <body class="no-skin">
 	<%@include file="../common/top.jsp"%>
@@ -111,16 +141,16 @@
 				<c:if test="${param.message==0 || param.message==-1 }">	
 					 <div id="warning-block" class="alert alert-warning" ><!--style="display: none;"  alert-success  alert-warning  <strong>无法提交！</strong>-->
 				  		 <a href="#" class="close" data-dismiss="alert">&times;</a>
-				  		 	操作失败！<c:if test="${param.message==-1 }">删除的用户有角色配置！</c:if>
+				  		 	操作失败！
 					</div>
 				</c:if>
 				<!-- Modal -->
-				<div class="modal fade" id="templatemo_modal" tabindex="-1" user="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+				<div class="modal fade" id="templatemo_modal" tabindex="-1" financeRecord="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 				  <div class="modal-dialog">
 				    <div class="modal-content">
 				      <div class="modal-header">
 				        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-				        <h4 class="modal-title" id="myModalLabel">查看产品详细信息</h4>
+				        <h4 class="modal-title" id="myModalLabel">查看财务信息详细信息</h4>
 				      </div>
 				      <div class="modal-body" id="detailContent">
 				      	
@@ -133,14 +163,14 @@
 				</div>
 				
 					<div class="col-md-12">
-					<form action="${ctx }/user/list" method="post" id="queryForm">
+					<form action="${ctx }/financeRecord/list" method="post" id="queryForm">
 						<input type="hidden" id="orderType" name="orderType" value="${orderType }" />
 						<input type="hidden" id="sortType" name="sortType" value="${sortType }" />
 					    <input type="hidden" id="pageNo" name="pageNo" />
 						<!-- 操作按钮start -->
 						<div class="page-header">
 							<div>
-								<button class="btn btn-sm btn-primary " type="button"  onclick="javascript:location.href='${ctx}/supplier/addSupplier'" id="demo1Box">
+								<button class="btn btn-sm btn-primary " type="button"  onclick="javascript:location.href='${ctx}/financeRecord/addFinanceRecord'" id="demo1Box">
 									新建</button>&nbsp;&nbsp;&nbsp;
 								<button class="btn btn-sm btn-primary " type="button" onclick="javascript:deleteAll();">删除</button>&nbsp;&nbsp;&nbsp;
 								<!-- 
@@ -151,7 +181,7 @@
 									<button class="btn btn-sm btn-primary  pull-right" style="margin-bottom: 7px;" type="submit">
 										<i class="ace-icon glyphicon glyphicon-search"></i> 搜 索
 									</button>
-									<input type="text" class="col-md-5 col-sm-2 pull-right" id="keyWord" name="keyWord"  value="${keyWord }" placeholder="产品名称|代码" data-rel="tooltip" title="登录名|姓名">
+									<input type="text" class="col-md-5 col-sm-2 pull-right" id="keyWord" name="keyWord"  value="${keyWord }" placeholder="公司名称|联系人" data-rel="tooltip" title="登录名|姓名">
 								</div><!-- 表单检索row  end-->
 							</div>
 						</div><!-- 操作按钮end -->
@@ -164,48 +194,64 @@
 									<input type="hidden" id="pageNo" name="pageNo" />
 										<table id="dynamic-table"
 											class="table table-striped table-bordered table-hover dataTable no-footer DTTT_selectable"
-											user="grid" aria-describedby="dynamic-table_info">
+											financeRecord="grid" aria-describedby="dynamic-table_info">
 											<thead>
-												<tr user="row">
+												<tr financeRecord="row">
 													<th class="center sorting_disabled" rowspan="1" colspan="1"
 														aria-label=""><label class="pos-rel"> <input
 															type="checkbox" class="ace"> <span class="lbl"></span>
 													</label></th>
-													<th class="sorting" id="loginName" tabindex="0" onclick="javascript:sort(this,'queryForm','loginName','asc');">流水名称</th>
-													<th class="sorting" id="name" tabindex="0" onclick="javascript:sort(this,'queryForm','name','asc');">类别</th>
-													<th class="sorting" id="name" tabindex="0" onclick="javascript:sort(this,'queryForm','name','asc');">金额</th>
-													<th class="sorting" id="name" tabindex="0" onclick="javascript:sort(this,'queryForm','name','asc');">XXXXXX</th>
-													<th class="sorting" id="name" tabindex="0" onclick="javascript:sort(this,'queryForm','name','asc');">XXXXXX</th>
-													<th class="sorting" id="name" tabindex="0" onclick="javascript:sort(this,'queryForm','name','asc');">时间</th>
+													<th class="sorting" id="amount" tabindex="0" onclick="javascript:sort(this,'queryForm','amount','asc');">金额</th>
+													<th class="sorting" id="amountType" tabindex="0" onclick="javascript:sort(this,'queryForm','amountType','asc');">类别</th>
+													<th class="sorting" id="amountUser" tabindex="0" onclick="javascript:sort(this,'queryForm','amountUser','asc');">经手人</th>
+													<th class="sorting" id="amountTime" tabindex="0" onclick="javascript:sort(this,'queryForm','amountTime','asc');">时间</th>
+													<th class="sorting" id="status" tabindex="0" onclick="javascript:sort(this,'queryForm','status','asc');">状态</th>
 													<th>操作</th>
 												</tr>
 											</thead>
 											<tbody>
+												<c:forEach  items="${pageContent.content}" var="financeRecord">
 													<tr user="row">
 														<td class="center"><label class="pos-rel"> 
-															<input name="ids" type="checkbox" class="ace" value="1}"> <span class="lbl"></span>
+															<input name="ids" type="checkbox" class="ace" value="${financeRecord.id }"> <span class="lbl"></span>
 														</label>
 														</td>
-														<td>......</td>
-														<td>支出/收入</td>
-														<td>￥888888</td>
-														<td>......</td>
-														<td>......</td>
-														<td>2018-6-03</td>
+														<td>${financeRecord.amount }</td>
 														<td>
-															<a class="green" href="#" class="test" onclick="getUser(${user.id})" data-toggle="modal" data-target="#templatemo_modal" title="查看详情">  <i
+															<c:if test="${financeRecord.amountType=='-1' }">
+																<span class="label label-sm label-success">支出</span>
+															</c:if>
+															<c:if test="${financeRecord.amountType=='+1' }">
+																<span class="label label-sm label-danger">收入</span>
+															</c:if>
+														
+														</td>
+														<td>${financeRecord.amountUser }</td>
+														<td>
+															<fmt:formatDate  value='${financeRecord.amountTime }' type='both' pattern='yyyy-MM-dd' />
+														</td>
+														<td>
+															<c:if test="${financeRecord.status==0 }"><span class="label label-sm label-info arrowed-in">待审核 </span></c:if>
+												        	<c:if test="${financeRecord.status==1 }"><span class="label label-sm label-success">审核通过</span></c:if>
+												        	<c:if test="${financeRecord.status==2 }"><span class="label label-sm label-warning arrowed-in arrowed-right">审核不通过</span></c:if>
+															
+														</td>
+														<td>
+															<a class="green" href="#" class="test" onclick="getFinanceRecord(${financeRecord.id})" data-toggle="modal" data-target="#templatemo_modal" title="查看详情">  <i
 																	class="ace-icon fa fa-book bigger-130"></i>
 															</a> &nbsp;&nbsp;&nbsp; 
-															<security:authorize ifAnyGranted="ROLER_SYS_USER_EDIT">	
-																<a class="green" href="void(0)" title="点击修改"> <i
-																		class="ace-icon fa fa-pencil bigger-130"></i>
-																</a> &nbsp;&nbsp;&nbsp;
-															</security:authorize>
+															<a class="green" href="${ctx }/financeRecord/editFinanceRecord/${financeRecord.id}" title="点击修改"> <i class="ace-icon fa fa-check bigger-130"></i>
+															</a> &nbsp;&nbsp;&nbsp;
+															<a class="red" href="javascript:void(0);" title="点击删除"  onclick="deleteFinanceRecord(${financeRecord.id})"> <i
+																		class="ace-icon fa fa-trash-o bigger-130"></i>
+															</a>
 														</td>
 													</tr>
+												</c:forEach>
 											</tbody>
 										</table>
 										<!-- 分页 begin -->
+										<tags:page dataPage="${pageContent}" paginationSize="2"/>   
 										<!-- 分页 end -->
 									</div>
 								</div>
@@ -258,61 +304,6 @@
 
 		});//end jQuery
 		
-	//刷新用户权限
-	function refreshAuthority(){
-		bootbox.setDefaults("locale","zh_CN"); 
-		bootbox.confirm("确认刷新!", function (result) {  
-			Show("刷新系统权限");
-			$.ajax({
-		        type : "get",
-		        url : "${ctx}/authority/refreshAuthority?orgCode=${sessionScope.loginOrgCode}",
-		        dataType:"json",
-			    success : function(flag) {
-			    	setTimeout("Close();",1000);
-			    	Show("刷新完成");
-			    	setTimeout("Close();",1000);
-			    	window.location.reload();
-			    }
-			});
-		}); 
-	}
-	var ctxPath ="${ctx}";
 	</script>
-	<script src="${ctx }/resources/script/js/statusBarExt.js" type="text/javascript"></script>
-	
-	<script>
-	/*
-var menu = new BootstrapMenu("#demo1Box", {
-  actions: [{
-	name: "jQuery特效  <i class='ace-icon fa fa-pencil bigger-130'></i>",
-	iconClass: "fa-plus",
-	onClick: function() {
-	  toastr.info("'jQuery特效 <i class='ace-icon fa fa-pencil bigger-130'></i>");
-	}
-  }, {
-	name: '站长素材',
-	iconClass: 'fa-edit',
-	onClick: function() {
-	  toastr.info("'站长素材");
-	}
-  }, {
-	name: '站长之家',
-	iconClass: 'fa-trash',
-	onClick: function() {
-	  toastr.info("'站长之家");
-	}
-  }]
-});
-
-	
-	$("#dynamic-table").dataTable({
-		initComplete: function () {
-		    $("#dynamic-table tbody tr").removeClass("odd");
-		    $("#dynamic-table tbody tr").removeClass("even");
-		    $("#dynamic-table tbody tr").addClass("DynamicAdd");
-		}
-	});
-	*/
-</script>
 </body>
 </html>

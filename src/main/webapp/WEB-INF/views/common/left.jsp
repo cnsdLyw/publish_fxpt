@@ -216,7 +216,7 @@
 
 					<ul class="submenu">
 						<li class="">
-							<a href="${ctx}/finance/list" lib="finance">
+							<a href="${ctx}/financeRecord/list" lib="financeRecord">
 								<i class="menu-icon fa fa-caret-right"></i>
 								财务信息
 							</a>
@@ -316,7 +316,7 @@
 						</security:authorize>
 						<security:authorize ifAnyGranted="ROLER_CLASS">
 							<li class="">
-								<a href="${ctx}/jcClassification/index?columnId=94" lib="jcClassification">
+								<a href="${ctx}/classification/index?columnId=94" lib="classification">
 									<i class="menu-icon fa fa-caret-right"></i>分类管理</a><b class="arrow"></b>
 							</li>
 						</security:authorize>

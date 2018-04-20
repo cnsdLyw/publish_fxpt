@@ -222,10 +222,10 @@
 						<!-- 操作按钮start -->
 						<div class="page-header">
 							<div>
-								<%-- <security:authorize ifAnyGranted="ROLER_SYS_ORGANIZATION_NEW">
+								 <security:authorize ifAnyGranted="ROLER_SYS_ORGANIZATION_NEW">
 									<button class="btn btn-sm btn-primary " type="button"  onclick="javascript:location.href='${ctx}/organization/addOrganization'">
 										新建</button>&nbsp;&nbsp;&nbsp;
-								</security:authorize> --%>
+								</security:authorize> 
 								<security:authorize ifAnyGranted="ROLER_SYS_ORGANIZATION_DELETE">		
 									<button class="btn btn-sm btn-primary " type="button" onclick="javascript:deleteAll();">删除</button>&nbsp;&nbsp;&nbsp;
 								</security:authorize>

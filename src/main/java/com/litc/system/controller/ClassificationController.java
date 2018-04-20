@@ -33,22 +33,22 @@ public class ClassificationController {
 	private final static Logger logger = LoggerFactory.getLogger(ClassificationController.class);
 	
 	@Autowired
-	private ClassificationService ClassificationService;
+	private ClassificationService classificationService;
 	
 	@Autowired
-	private ClassificationTypeService ClassificationTypeService;
+	private ClassificationTypeService classificationTypeService;
 	
 	@RequestMapping(value = "/index")
 	public ModelAndView index() throws Exception {
-		ModelAndView modelAndView = new ModelAndView("system/Classification/Classification-index");
-		List<ClassificationType> list = ClassificationTypeService.getAll();
+		ModelAndView modelAndView = new ModelAndView("system/classification/classification-index");
+		List<ClassificationType> list = classificationTypeService.getAll();
 		modelAndView.addObject("list",list);
 		return modelAndView;
 	}
 
 	@RequestMapping(value = "/leftTree")
 	public ModelAndView leftTree(HttpServletRequest request,String classKey, String classCode) throws Exception {
-		ModelAndView modelAndView = new ModelAndView("system/Classification/Classification-leftTree");
+		ModelAndView modelAndView = new ModelAndView("system/classification/classification-leftTree");
 		modelAndView.addObject("classKey", classKey);
 		modelAndView.addObject("classCode", classCode);
 		return modelAndView;
@@ -67,9 +67,9 @@ public class ClassificationController {
 		logger.info("getTreeData 获取分类   分类码  "+classKey+" ,父节点 "+parentCode);
 		List<Classification> list = null;
 		if(StringUtils.isNotBlank(parentCode)){
-			list = ClassificationService.getClassByKeyAndCode(classKey, parentCode);
+			list = classificationService.getClassByKeyAndCode(classKey, parentCode);
 		}else{
-			list = ClassificationService.getClassByKeyAndLevel(classKey, (short)1);
+			list = classificationService.getClassByKeyAndLevel(classKey, (short)1);
 		}
 		
 		Map<String,Item> map = new HashMap<String, Item>();
@@ -99,12 +99,12 @@ public class ClassificationController {
 		logger.info("getAllTreeData 获取所有分类  ，分类码  "+classKey+"，展开的节点 "+classCode);
 		String openListStr = null;
 		if(StringUtils.isNotBlank(classCode)){
-			openListStr = ClassificationService.getOpenListStr(classCode);
+			openListStr = classificationService.getOpenListStr(classCode);
 		}
 		List<Classification> list = null;
 		Map<String,Item> map = new HashMap<String, Item>();
 		if(StringUtils.isNotBlank(classKey)){
-			list = ClassificationService.getClassByKey(classKey);
+			list = classificationService.getClassByKey(classKey);
 			for(Classification clazz:list){
 				if(StringUtils.isBlank(clazz.getParentCode())){
 					Item item = new Item();
@@ -160,35 +160,35 @@ public class ClassificationController {
 	@RequestMapping(value="/isClassCodeExist", method=RequestMethod.GET)
 	public boolean isClassCodeExist(String classCode){
 		logger.info("addClass  查询分类码是否已经存在  "+classCode);
-		return ClassificationService.isClassCodeUsed(classCode);
+		return classificationService.isClassCodeUsed(classCode);
 	}
 	
 	@RequestMapping(value = "/saveClass", method = RequestMethod.POST)
-	public ModelAndView saveClass(@ModelAttribute Classification Classification,HttpServletRequest request) {
+	public ModelAndView saveClass(@ModelAttribute Classification classification,HttpServletRequest request) {
 		logger.info("saveClass  保存分类");
-		ModelAndView modelAndView = new ModelAndView("redirect:/Classification/updateClass");
+		ModelAndView modelAndView = new ModelAndView("redirect:/classification/updateClass");
 		
-		if(StringUtils.isNotBlank(Classification.getParentCode())){
-			Classification parentClass = ClassificationService.getClassification(Classification.getParentCode());
+		if(StringUtils.isNotBlank(classification.getParentCode())){
+			Classification parentClass = classificationService.getClassification(classification.getParentCode());
 			if(!parentClass.isHasLeaf()){
 				parentClass.setHasLeaf(true);
-				ClassificationService.addClassification(parentClass);
+				classificationService.addClassification(parentClass);
 			}
-			Classification.setClassLevel((short)(parentClass.getClassLevel()+1));
+			classification.setClassLevel((short)(parentClass.getClassLevel()+1));
 		}else{
-			Classification.setClassLevel((short)1);
+			classification.setClassLevel((short)1);
 		}
 		
 		//查询子节点，设置hasLeaf属性
-		List<Classification> list = ClassificationService.getClassByKeyAndCode(Classification.getClassKey(), Classification.getClassCode());
+		List<Classification> list = classificationService.getClassByKeyAndCode(classification.getClassKey(), classification.getClassCode());
 		if(list!=null&&list.size()>0){
-			Classification.setHasLeaf(true);
+			classification.setHasLeaf(true);
 		}
 		
 		
 		
-		ClassificationService.addClassification(Classification);
-		modelAndView.addObject("classCode",Classification.getClassCode());
+		classificationService.addClassification(classification);
+		modelAndView.addObject("classCode",classification.getClassCode());
 		modelAndView.addObject("message","1");
 		return modelAndView;
 	}
@@ -196,13 +196,13 @@ public class ClassificationController {
 	@RequestMapping(value = "/addClass")
 	public ModelAndView addClass(String classKey,String parentCode) throws Exception {
 		logger.info("addClass  添加分类  "+classKey+"   "+parentCode);
-		ModelAndView modelAndView = new ModelAndView("system/Classification/Classification-add");
-		Classification Classification = new Classification();
+		ModelAndView modelAndView = new ModelAndView("system/classification/classification-add");
+		Classification classification = new Classification();
 		if(StringUtils.isNotBlank(parentCode)){
-			Classification.setParentCode(parentCode);
+			classification.setParentCode(parentCode);
 		}
-		Classification.setClassKey(classKey);
-		modelAndView.addObject("Classification",Classification);
+		classification.setClassKey(classKey);
+		modelAndView.addObject("classification",classification);
 		modelAndView.addObject("check",1);
 		return modelAndView;
 	}
@@ -210,10 +210,10 @@ public class ClassificationController {
 	@RequestMapping(value = "/updateClass")
 	public ModelAndView updateClass(String classCode) throws Exception {
 		logger.info("updateClass  修改分类  "+classCode);
-		ModelAndView modelAndView = new ModelAndView("system/Classification/Classification-add");
-		Classification Classification = ClassificationService.getClassification(classCode);
+		ModelAndView modelAndView = new ModelAndView("system/classification/classification-add");
+		Classification classification = classificationService.getClassification(classCode);
 		modelAndView.addObject("classCode",classCode);
-		modelAndView.addObject("Classification",Classification);
+		modelAndView.addObject("classification",classification);
 		modelAndView.addObject("check",0);
 		return modelAndView;
 	}
@@ -224,25 +224,25 @@ public class ClassificationController {
 		logger.info("deleteClass  删除分类  "+classCode);
 		Map<String,String> returnMap = new HashMap<String,String>();
 		try {
-			Classification Classification = ClassificationService.getClassification(classCode);
-			List<Classification> listC = ClassificationService.getClassByKeyAndCode(Classification.getClassKey(), Classification.getClassCode());
+			Classification Classification = classificationService.getClassification(classCode);
+			List<Classification> listC = classificationService.getClassByKeyAndCode(Classification.getClassKey(), Classification.getClassCode());
 			if(listC!=null&&listC.size()>0){
 				returnMap.put("status", "0");
 			}else{
-				ClassificationService.deleteClassification(classCode);
+				classificationService.deleteClassification(classCode);
 				String classKey = Classification.getClassKey();
 				String returnClassCode = "";
 				if(StringUtils.isNotBlank(Classification.getParentCode())){
-					Classification parentClass = ClassificationService.getClassification(Classification.getParentCode());
+					Classification parentClass = classificationService.getClassification(Classification.getParentCode());
 					//查询子节点，设置hasLeaf属性
-					List<Classification> list = ClassificationService.getClassByKeyAndCode(parentClass.getClassKey(), parentClass.getClassCode());
+					List<Classification> list = classificationService.getClassByKeyAndCode(parentClass.getClassKey(), parentClass.getClassCode());
 					if(list!=null&&list.size()>0){
 						parentClass.setHasLeaf(true);
 					}else{
 						parentClass.setHasLeaf(false);
 					}
 					returnClassCode = parentClass.getClassCode();
-					ClassificationService.addClassification(parentClass);
+					classificationService.addClassification(parentClass);
 				}
 				returnMap.put("status", "1");
 				returnMap.put("classKey", classKey);

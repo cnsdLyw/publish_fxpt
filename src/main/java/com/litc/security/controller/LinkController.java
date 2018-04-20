@@ -1,7 +1,6 @@
 package com.litc.security.controller;
 
 import java.io.File;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -64,7 +63,7 @@ public class LinkController extends BaseController{
 	private SupplierService supplierService;
 	
 	@Autowired
-	private ClassificationService ClassificationService;
+	private ClassificationService classificationService;
 	
 	//加工使用的变量
 	protected static final Direction SORT_TYPE_DESC = Sort.Direction.DESC;
@@ -283,8 +282,7 @@ public class LinkController extends BaseController{
 		logger.info("注册机构  regOrganizationPage");
 		ModelAndView modelAndView = new ModelAndView("security/supplier-register");
 		modelAndView.addObject("supplier", new Supplier());
-		modelAndView.addObject("successCode",successCode);
-		List<Classification> classList = ClassificationService.getClassByKey(Constant.SYS_CLASS_INDUSTRY); 
+		List<Classification> classList = classificationService.getClassByKey(Constant.SYS_CLASS_INDUSTRY); 
 		modelAndView.addObject("classList",classList);//获取行业分类
 		return modelAndView;
 	}
@@ -294,8 +292,8 @@ public class LinkController extends BaseController{
 						@RequestParam("idCardObverseFile") MultipartFile idCardObverseFile,
 						@RequestParam("idCardReverseFile") MultipartFile idCardReverseFile,
 						@RequestParam("businessLicenceCopyFile") MultipartFile businessLicenceCopyFile,
-						@RequestParam("certificateAuthorizationFile") MultipartFile certificateAuthorizationFile
-							) {
+						@RequestParam("certificateAuthorizationFile") MultipartFile certificateAuthorizationFile,
+						String otherClass) {
 		//先保存附件到Tomcat目录下
 		
 		ModelAndView modelAndView = new ModelAndView("/pub/index.jsp");
@@ -312,22 +310,59 @@ public class LinkController extends BaseController{
 			String str1 = saveFile(idCardObverseFile, home, "idCardObverseFile"+File.separator+tempPath);
 			if(StringUtils.isNotBlank(str1)){
 				supplier.setIdCardObverse(str1);
+				supplier.setIdCardObverseName(idCardObverseFile.getOriginalFilename());
 			}
 			String str2 = saveFile(idCardReverseFile,  home, "idCardReverseFile"+File.separator+tempPath);
 			if(StringUtils.isNotBlank(str2)){
 				supplier.setIdCardReverse(str2);
+				supplier.setIdCardReverseName(idCardReverseFile.getOriginalFilename());
 			}
 			String str3 = saveFile(businessLicenceCopyFile,  home,"businessLicenceCopyFile"+File.separator+tempPath);
 			if(StringUtils.isNotBlank(str3)){
 				supplier.setBusinessLicenceCopy(str3);
+				supplier.setBusinessLicenceCopyName(businessLicenceCopyFile.getOriginalFilename());
 			}
 			String str4 = saveFile(certificateAuthorizationFile,  home, "certificateAuthorizationFile"+File.separator+tempPath);
 			if(StringUtils.isNotBlank(str4)){
 				supplier.setCertificateAuthorization(str4);
+				supplier.setCertificateAuthorizationName(certificateAuthorizationFile.getOriginalFilename());
 			}
 			
 		} catch (Exception e) {
 			e.printStackTrace();
+		}
+		//处理分类信息
+		if(supplier!=null){
+			if(StringUtils.isNotBlank(supplier.getIndustryClassification())){
+				if(supplier.getIndustryClassification().equals("-1")){
+					supplier.setIndustryClassification("");
+					if(StringUtils.isNotBlank(otherClass)){
+						//1 先查询有没有重名的行也分类
+						boolean flag = false;
+						List<Classification> classList = classificationService.getClassByKey(Constant.SYS_CLASS_INDUSTRY); 
+						for(Classification clazz:classList){
+							if(clazz.getClassName().equals(otherClass)){
+								supplier.setIndustryClassification(clazz.getClassCode());
+								flag = true;
+							}
+						}
+						//2 如果没有重名分类则创建新的分类
+						if(!flag){
+							Classification newClazz = new Classification();
+							newClazz.setClassCode(java.util.UUID.randomUUID().toString());
+							newClazz.setClassName(otherClass);
+							newClazz.setClassLevel((short)1);
+							newClazz.setClassKey(Constant.SYS_CLASS_INDUSTRY);
+							newClazz.setHasLeaf(false);
+							newClazz.setParentCode("");
+							newClazz.setRemark("");
+							classificationService.addClassification(newClazz);
+							supplier.setIndustryClassification(newClazz.getClassCode());
+						}
+					}
+					
+				}
+			}
 		}
 		supplier.setStatus(0);
 		supplier.setLastModifyTime(new Date());
@@ -343,8 +378,8 @@ public class LinkController extends BaseController{
 				String fileName = file.getOriginalFilename();
 				if(StringUtils.isNotBlank(fileName)){
 					String fileExt = FilePathUtil.getSuffix(fileName);
-					filePath = Constant.FILE_SAVE_PATH + File.separator + savePath;
-					File saveFolder = new File(homePath + File.separator + filePath);
+					filePath = File.separator + Constant.FILE_SAVE_PATH + File.separator + savePath;
+					File saveFolder = new File(homePath + filePath);
 					if(!saveFolder.exists()){
 						saveFolder.mkdirs();
 					}

@@ -26,7 +26,7 @@ public interface ClassificationRepository extends JpaRepository<Classification,S
 	@Query("from com.litc.system.model.Classification where classKey=?1 and parentCode=?2") 
 	List<Classification> getClassByKeyAndParentcode(String classKey,String parentCode);
 	
-	@Query(value="select count(*) from jc_classification where class_code=?1",nativeQuery=true)
+	@Query(value="select count(*) from sys_classification where class_code=?1",nativeQuery=true)
 	int isClassCodeExist(String classCode);
 }
 

@@ -32,6 +32,14 @@
 			return this.optional(element) || chrNum.test(value);
 			
 		}, "只能输入数字");
+		
+		//数字，包括整数和小数
+		$.validator.addMethod("isNumber", function(value, element) {
+			var chrNum = /^$|^(0|[1-9]\d*)(\.\d{1,2})?$/;//只有数字
+			return this.optional(element) || chrNum.test(value);
+			
+		}, "只能为数字，最多两位小数");
+		
 		//英文字母汉字加数字
 		$.validator.addMethod("chrnumAndZm", function(value, element) {
 			var chrEn = /^[A-Za-z0-9/]+$/; 
@@ -111,9 +119,10 @@
 	    	return this.optional(element) || (zip.test(value));    
 	    }, "请填写3位数字，第一位必须大于0");
 	    // 判断http网址
-		$.validator.addMethod("isWebsit", function(value, element) {       
-			return this.optional(element) || /^www./.test(value);       
-		}, "请输入www.开头的网址"); 
+		$.validator.addMethod("isWebsit", function(value, element) {
+			var urlReg =  /[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+\.?/;
+			return this.optional(element) || urlReg.test(value);       
+		}, "请输入正确的网址"); 
 		// 判断ftp地址
 		$.validator.addMethod("isFtp", function(value, element) {
 			var ftpUrl =  /^ftp:\/\//;

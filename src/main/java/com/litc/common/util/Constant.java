@@ -186,4 +186,14 @@ public class Constant {
 	 * 附件在Tomcat下的存储位置
 	 */
 	public static final String FILE_SAVE_PATH = "attachement";
+	
+	/**
+	 * 供应商表名
+	 */
+	public static final String SUPPLIER_TABLE_NAME = "sly_supplier";
+	
+	/**
+	 * 财务流水表名
+	 */
+	//public static final String SUPPLIER_TABLE_NAME = "sly_supplier";
 }

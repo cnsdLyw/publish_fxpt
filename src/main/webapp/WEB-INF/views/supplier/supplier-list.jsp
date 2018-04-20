@@ -32,13 +32,15 @@
 	           				"<p><strong class='pTitle'>业务联系人邮箱</strong>："+(supplier.businessContactsEmail!=null?supplier.businessContactsEmail:"")+" </p>"+
 	           				"<p><strong class='pTitle'>地区</strong>："+(supplier.province!=null?supplier.province:"")+"&nbsp;&nbsp;"+(supplier.city!=null?supplier.city:"")+"&nbsp;&nbsp;"+(supplier.county!=null?supplier.county:"")+" </p>"+
 	           				"<p><strong class='pTitle'>供应商地址</strong>："+(supplier.address!=null?supplier.address:"")+" </p>"+
+	           				"<p><strong class='pTitle'>邮编</strong>："+(supplier.postalCode!=null?supplier.postalCode:"")+" </p>"+
+	           				"<p><strong class='pTitle'>公司网址</strong>："+(supplier.website!=null?supplier.website:"")+" </p>"+
 	           				"<p><strong class='pTitle'>公司电话</strong>："+(supplier.telephone!=null?supplier.telephone:"")+" </p>"+
 	           				"<p><strong class='pTitle'>公司传真</strong>："+(supplier.fax!=null?supplier.fax:"")+" </p>"+
-	           				"<p><strong class='pTitle'>邮编</strong>："+(supplier.postalCode!=null?supplier.postalCode:"")+" </p>"+
-	           				"<p><strong class='pTitle'>主管人身份证正面</strong>："+(supplier.idCardObverse!=null?"<a target='_blank' href='${ctx}"+supplier.idCardObverse+"/'>预览</a>":"")+" </p>"+
-	           				"<p><strong class='pTitle'>主管人身份证反面</strong>："+(supplier.idCardReverse!=null?"<a target='_blank' href='${ctx}"+supplier.idCardReverse+"/'>预览</a>":"")+" </p>"+
-	           				"<p><strong class='pTitle'>企业营业执照副本</strong>："+(supplier.businessLicenceCopy!=null?"<a target='_blank' href='${ctx}"+supplier.businessLicenceCopy+"/'>预览</a>":"")+" </p>"+
-	           				"<p><strong class='pTitle'>授权书</strong>："+(supplier.certificateAuthorization!=null?"<a target='_blank' href='${ctx}"+supplier.certificateAuthorization+"/'>预览</a>":"")+" </p>"+
+	           				"<p><strong class='pTitle'>主管人身份证正面</strong>："+(supplier.idCardObverse!=null?"<a target='_blank' href='${ctx}"+supplier.idCardObverse+"/' title='点击预览'>"+supplier.idCardObverseName+"</a>":"")+" </p>"+
+	           				"<p><strong class='pTitle'>主管人身份证反面</strong>："+(supplier.idCardReverse!=null?"<a target='_blank' href='${ctx}"+supplier.idCardReverse+"/' title='点击预览'>"+supplier.idCardReverseName+"</a>":"")+" </p>"+
+	           				"<p><strong class='pTitle'>企业营业执照副本</strong>："+(supplier.businessLicenceCopy!=null?"<a target='_blank' href='${ctx}"+supplier.businessLicenceCopy+"/' title='点击预览'>"+supplier.businessLicenceCopyName+"</a>":"")+" </p>"+
+	           				"<p><strong class='pTitle'>授权书</strong>："+(supplier.certificateAuthorization!=null?"<a target='_blank' href='${ctx}"+supplier.certificateAuthorization+"/' title='点击预览'>"+supplier.certificateAuthorizationName+"</a>":"")+" </p>"+
+	           				"<p><strong class='pTitle'>供应商简介</strong>："+(supplier.remark!=null?supplier.remark:"")+" </p>"+
 	           				"<p><strong class='pTitle'>最后修改时间</strong>："+(supplier.lastModifyTime!=null?FormatDate(supplier.lastModifyTime):"")+" </p>"
 	           				;
 				$("#detailContent").html(content);
@@ -72,7 +74,7 @@
                 } 
          });  
 		}else{
-			bootbox.alert("您还没有选择要删除的用户!", function() {});
+			bootbox.alert("您还没有选择要删除的供应商!", function() {});
 		}
 	}
 	
@@ -112,8 +114,8 @@
 					<ul class="breadcrumb">
 						<li><i class="ace-icon fa fa-home home-icon"></i> <a href="${ctx}/index">首页</a>
 						</li>
-						<li></i> <a href="#">交易平台</a></li>
-						<li class="active">产品列表</li>
+						<li></i> <a href="#">供应商系统</a></li>
+						<li class="active">供应商</li>
 					</ul>
 				</div>
 				<c:if test="${param.message==1 }">
@@ -125,7 +127,7 @@
 				<c:if test="${param.message==0 || param.message==-1 }">	
 					 <div id="warning-block" class="alert alert-warning" ><!--style="display: none;"  alert-success  alert-warning  <strong>无法提交！</strong>-->
 				  		 <a href="#" class="close" data-dismiss="alert">&times;</a>
-				  		 	操作失败！<c:if test="${param.message==-1 }">删除的用户有角色配置！</c:if>
+				  		 	操作失败！
 					</div>
 				</c:if>
 				<!-- Modal -->
@@ -203,7 +205,11 @@
 														</label>
 														</td>
 														<td>${supplier.companyName }</td>
-														<td>${supplier.industryClassification }</td>
+														<td>
+															<c:if test="${supplier.industryClassification!=null&&supplier.industryClassification!='' }">
+																${clazzMap[supplier.industryClassification] } 
+															</c:if>
+														</td>
 														<td>${supplier.supervisor }</td>
 														<td class="hidden-1024">${supplier.supervisorPhone }</td>
 														<td>${supplier.businessContacts }</td>
@@ -213,14 +219,18 @@
 															<a class="green" href="#" class="test" onclick="getSupplier(${supplier.id})" data-toggle="modal" data-target="#templatemo_modal" title="查看详情">  <i
 																	class="ace-icon fa fa-book bigger-130"></i>
 															</a> &nbsp;&nbsp;&nbsp; 
-															<a class="green" href="void(0)" title="点击修改"> <i class="ace-icon fa fa-pencil bigger-130"></i>
+															<a class="green" href="${ctx }/supplier/editSupplier/${supplier.id}" title="点击修改"> <i class="ace-icon fa fa-pencil bigger-130"></i>
 															</a> &nbsp;&nbsp;&nbsp;
+															<a class="red" href="javascript:void(0);" title="点击删除"  onclick="deleteSupplier(${supplier.id})"> <i
+																		class="ace-icon fa fa-trash-o bigger-130"></i>
+															</a>
 														</td>
 													</tr>
 												</c:forEach>
 											</tbody>
 										</table>
 										<!-- 分页 begin -->
+										<tags:page dataPage="${pageContent}" paginationSize="2"/>   
 										<!-- 分页 end -->
 									</div>
 								</div>
@@ -272,62 +282,6 @@
 			
 
 		});//end jQuery
-		
-	//刷新用户权限
-	function refreshAuthority(){
-		bootbox.setDefaults("locale","zh_CN"); 
-		bootbox.confirm("确认刷新!", function (result) {  
-			Show("刷新系统权限");
-			$.ajax({
-		        type : "get",
-		        url : "${ctx}/authority/refreshAuthority?orgCode=${sessionScope.loginOrgCode}",
-		        dataType:"json",
-			    success : function(flag) {
-			    	setTimeout("Close();",1000);
-			    	Show("刷新完成");
-			    	setTimeout("Close();",1000);
-			    	window.location.reload();
-			    }
-			});
-		}); 
-	}
-	var ctxPath ="${ctx}";
 	</script>
-	<script src="${ctx }/resources/script/js/statusBarExt.js" type="text/javascript"></script>
-	
-	<script>
-	/*
-var menu = new BootstrapMenu("#demo1Box", {
-  actions: [{
-	name: "jQuery特效  <i class='ace-icon fa fa-pencil bigger-130'></i>",
-	iconClass: "fa-plus",
-	onClick: function() {
-	  toastr.info("'jQuery特效 <i class='ace-icon fa fa-pencil bigger-130'></i>");
-	}
-  }, {
-	name: '站长素材',
-	iconClass: 'fa-edit',
-	onClick: function() {
-	  toastr.info("'站长素材");
-	}
-  }, {
-	name: '站长之家',
-	iconClass: 'fa-trash',
-	onClick: function() {
-	  toastr.info("'站长之家");
-	}
-  }]
-});
-
-	
-	$("#dynamic-table").dataTable({
-		initComplete: function () {
-		    $("#dynamic-table tbody tr").removeClass("odd");
-		    $("#dynamic-table tbody tr").removeClass("even");
-		    $("#dynamic-table tbody tr").addClass("DynamicAdd");
-		}
-	});
-	*/
-</script>
 </body>
 </html>

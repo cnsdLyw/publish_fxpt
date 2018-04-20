@@ -51,11 +51,13 @@ public class SupplierServiceImpl implements SupplierService {
 	}
 
 	@Override
+	@Transactional
 	public void deleteSupplier(Long id) {
 		supplierRepository.delete(id);
 	}
 
 	@Override
+	@Transactional
 	public int deleteSuppliers(Long[] ids) {
 		return supplierRepository.deleteUserIn(ids);
 	}
@@ -89,14 +91,19 @@ public class SupplierServiceImpl implements SupplierService {
 
 	@Override
 	public boolean isEmailExist(String email) {
-		// TODO Auto-generated method stub
-		return false;
+		int i = supplierRepository.isEmailExist(email);
+		return i>0?true:false;
 	}
 
 	@Override
 	public boolean isEmailExist(Long id, String email) {
-		// TODO Auto-generated method stub
-		return false;
+		int i = 0;
+		if(id!=null){
+			i = supplierRepository.isEmailExist(id,email);
+		}else{
+			i = supplierRepository.isEmailExist(email);
+		}
+		return i>0?true:false;
 	}
 
 }

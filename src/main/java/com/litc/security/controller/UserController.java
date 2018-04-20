@@ -343,6 +343,7 @@ public class UserController extends BaseController<User>{
 	public boolean isLoginNameExist(String loginName){
 		return userService.isLoginNameExist(loginName)||organizationApplyService.isLoginNameExist(loginName);
 	}
+	
 	@RequestMapping(value="/isEmailExist", method=RequestMethod.GET)
 	@ResponseBody
 	public boolean isEmailExist(String email){
